@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CinkAI Lite - Online</title>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; height: 95vh; display: flex; flex-direction: column; }
+        .header { background: linear-gradient(90deg, #4CAF50, #2E7D32); color: white; padding: 20px; text-align: center; }
+        .chat-box { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 15px; }
+        .input-area { padding: 15px; background: white; border-top: 1px solid #ddd; display: flex; gap: 10px; }
+        #user-input { flex: 1; padding: 12px; border: 2px solid #4CAF50; border-radius: 25px; font-size: 16px; }
+        #send-btn { background: #4CAF50; color: white; border: none; border-radius: 25px; padding: 0 25px; cursor: pointer; }
+        .message { max-width: 80%; }
+        .ai { align-self: flex-start; }
+        .user { align-self: flex-end; }
+        .bubble { padding: 12px 16px; border-radius: 18px; line-height: 1.4; }
+        .ai .bubble { background: white; border: 2px solid #4CAF50; }
+        .user .bubble { background: #4CAF50; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 CinkAI Lite</h1>
+            <p>Online AI asistent - funguje všude!</p>
+        </div>
+        <div class="chat-box" id="chat-box">
+            <div class="message ai">
+                <div class="bubble">👋 Ahoj! Jsem CinkAI Lite.<br>Povídejme si! 😊</div>
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Napiš zprávu..." autocomplete="off">
+            <button id="send-btn" onclick="sendMessage()">Odeslat</button>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        
+        // MOZEK AI
+        const aiBrain = {
+            'ahoj': 'Čau! 👋 Jsem CinkAI Lite!',
+            'jak se máš': 'Skvěle! Jsem online AI.',
+            'kdo jsi': 'AI vytvořená pomocí HTML/JS!',
+            'čas': 'Teď je: ' + new Date().toLocaleTimeString(),
+            'co umíš': 'Umím si povídat a odpovídat na otázky!',
+            'default': 'Zajímavá otázka! 😊'
+        };
+        
+        function addMessage(text, isUser = false) {
+            const div = document.createElement('div');
+            div.className = `message ${isUser ? 'user' : 'ai'}`;
+            div.innerHTML = `<div class="bubble">${text.replace(/\n/g, '<br>')}</div>`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
+        function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            
+            addMessage(text, true);
+            userInput.value = '';
+            
+            setTimeout(() => {
+                const lower = text.toLowerCase();
+                let reply = aiBrain.default;
+                
+                for (const [key, value] of Object.entries(aiBrain)) {
+                    if (lower.includes(key)) {
+                        reply = value;
+                        break;
+                    }
+                }
+                
+                addMessage(reply, false);
+            }, 500);
+        }
+        
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        userInput.focus();
+    </script>
+</body>
+</html>
